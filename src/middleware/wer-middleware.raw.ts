@@ -5,7 +5,8 @@
 /*  This will be converted into a lodash templ., any  */
 /*  external argument must be provided using it       */
 /* -------------------------------------------------- */
-(function(window) {
+(function() {
+  try {window} catch {var window: any;};
 
   const injectionContext = this || window || {browser: null};
 
@@ -45,7 +46,8 @@
       switch (type) {
         case SIGN_RELOAD:
           logger("Detected Changes. Reloading...");
-          reloadPage && window.location.reload();
+          // eslint-disable-next-line no-var,vars-on-top,block-scoped-var
+          reloadPage && window?.location.reload();
           break;
         case SIGN_LOG:
           console.info(payload);
@@ -122,7 +124,7 @@
           logger("Detected Changes. Reloading...");
           // Always reload extension pages in the foreground when they change.
           // This option doesn't make sense otherwise
-          window.location.reload();
+          window?.location.reload();
           break;
 
         case SIGN_LOG:
@@ -137,10 +139,10 @@
 
   // ======================= Bootstraps the middleware =========================== //
   runtime.reload
-    ? extension.getBackgroundPage() === window ? backgroundWorker(new WebSocket(wsHost)) : extensionPageWorker()
+    ? !window ? backgroundWorker(new WebSocket(wsHost)) : extensionPageWorker()
     : contentScriptWorker();
-})(window);
-
+})();
+/* eslint-disable */
 /* ----------------------------------------------- */
 /* End of Webpack Hot Extension Middleware  */
 /* ----------------------------------------------- */
